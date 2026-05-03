@@ -1,7 +1,14 @@
 __pycache__/
+*.pyc
 *.py[cod]
 .venv/
+.venv310/
 venv/
 env/
 .env
 .streamlit/secrets.toml
+data/
+kaggle.json
+artifacts/plant_disease_model.keras
+streamlit.log
+streamlit.err.log
