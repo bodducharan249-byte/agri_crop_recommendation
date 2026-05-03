@@ -12,6 +12,5 @@ data/
 *.zip
 kaggle.json
 artifacts/plant_disease_model.keras
-artifacts/seed_quality_model.keras
 streamlit.log
 streamlit.err.log
