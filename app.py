@@ -124,6 +124,11 @@ pages = [
         title="Rainfall Prediction",
         icon="🌧️",
     ),
+    st.Page(
+        "pages/5_Seed_Quality_Checker.py",
+        title="Seed Quality Checker",
+        icon="🌰",
+    ),
 ]
 
 navigation = st.navigation(pages, position="sidebar")
