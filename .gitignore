@@ -8,6 +8,8 @@ env/
 .env
 .streamlit/secrets.toml
 data/
+*.csv
+*.zip
 kaggle.json
 artifacts/plant_disease_model.keras
 streamlit.log
