@@ -134,6 +134,11 @@ pages = [
         title="Pesticide Recommendation",
         icon="🧪",
     ),
+    st.Page(
+        "pages/7_Smart_Irrigation.py",
+        title="Smart Irrigation",
+        icon="💧",
+    ),
 ]
 
 navigation = st.navigation(pages, position="sidebar")
