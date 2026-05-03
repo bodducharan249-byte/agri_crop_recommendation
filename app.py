@@ -129,6 +129,11 @@ pages = [
         title="Seed Quality Checker",
         icon="🌰",
     ),
+    st.Page(
+        "pages/6_Pesticide_Recommendation.py",
+        title="Pesticide Recommendation",
+        icon="🧪",
+    ),
 ]
 
 navigation = st.navigation(pages, position="sidebar")
