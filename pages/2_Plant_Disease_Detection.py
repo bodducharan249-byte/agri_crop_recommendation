@@ -6,6 +6,8 @@ import streamlit as st
 import tensorflow as tf
 from PIL import Image
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = PROJECT_ROOT / "artifacts" / "plant_disease_model.keras"
@@ -162,8 +164,11 @@ def prepare_image(image: Image.Image, image_size: tuple[int, int]) -> np.ndarray
     return np.expand_dims(array, axis=0)
 
 
-st.title("Plant Disease Detection")
-st.write("Upload a clear leaf image to detect the likely plant disease.")
+apply_global_styles()
+premium_header(
+    "🦠 Plant Disease Detection",
+    "Upload a clear leaf image to detect the likely plant disease.",
+)
 
 try:
     model, class_names = load_artifacts()
@@ -188,7 +193,7 @@ image = Image.open(uploaded_file)
 st.subheader("Uploaded Image")
 st.image(image, use_column_width=True)
 
-with st.spinner("Analyzing leaf image..."):
+with st.spinner("🤖 AI is analyzing your farm data..."):
     predictions = model.predict(prepare_image(image, image_size), verbose=0)[0]
 
 predicted_index = int(np.argmax(predictions))
@@ -200,9 +205,9 @@ st.subheader("Detection Result")
 
 result_col, confidence_col = st.columns(2)
 with result_col:
-    st.metric("Disease name", disease_name)
+    result_card("Disease name", disease_name, "info")
 with confidence_col:
-    st.metric("Confidence", f"{confidence:.2f}%")
+    result_card("Confidence", f"{confidence:.2f}%", "success")
 
 guidance = DISEASE_GUIDANCE.get(disease_name)
 if guidance:
@@ -213,3 +218,4 @@ else:
     st.warning("Treatment: Consult an agricultural expert for crop-specific treatment advice.")
 
 st.info("Consult agricultural expert before applying treatment")
+footer()

@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import streamlit as st
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
@@ -99,8 +101,11 @@ def rainfall_message(total_rainfall: float) -> tuple[str, str]:
     )
 
 
-st.title("🌧️ Rainfall Prediction")
-st.write("Enter a location to check the next 7 days of expected rainfall and temperature.")
+apply_global_styles()
+premium_header(
+    "🌧️ Rainfall Prediction",
+    "Enter a location to check the next 7 days of expected rainfall and temperature.",
+)
 
 with st.form("rainfall_prediction_form"):
     city_name = st.text_input("Location / city name", placeholder="Example: Hyderabad")
@@ -112,15 +117,16 @@ if submit:
         st.error("Please enter a location or city name.")
         st.stop()
 
-    try:
-        location = search_location(clean_city)
-        forecast = fetch_forecast(location["latitude"], location["longitude"])
-    except ValueError as exc:
-        st.error(str(exc))
-        st.stop()
-    except RainfallApiError as exc:
-        st.error(str(exc))
-        st.stop()
+    with st.spinner("🤖 AI is analyzing your farm data..."):
+        try:
+            location = search_location(clean_city)
+            forecast = fetch_forecast(location["latitude"], location["longitude"])
+        except ValueError as exc:
+            st.error(str(exc))
+            st.stop()
+        except RainfallApiError as exc:
+            st.error(str(exc))
+            st.stop()
 
     total_rainfall = float(forecast["Rainfall (mm)"].sum())
     place_parts = [
@@ -132,7 +138,7 @@ if submit:
     message_title, message_text = rainfall_message(total_rainfall)
 
     st.subheader(place_name or clean_city.title())
-    st.metric("Total expected rainfall for next 7 days", f"{total_rainfall:.1f} mm")
+    result_card("Total expected rainfall for next 7 days", f"{total_rainfall:.1f} mm", "info")
 
     if total_rainfall < 10:
         st.warning(f"{message_title}: {message_text}")
@@ -147,3 +153,5 @@ if submit:
     st.subheader("Rainfall Trend")
     chart_data = forecast.set_index("Date")["Rainfall (mm)"]
     st.line_chart(chart_data)
+
+footer()

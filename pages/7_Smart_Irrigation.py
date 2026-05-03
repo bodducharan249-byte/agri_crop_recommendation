@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import streamlit as st
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
@@ -122,8 +124,11 @@ def irrigation_decision(soil_moisture: int, rainfall_3_day: float, max_temp: flo
     )
 
 
-st.title("💧 Smart Irrigation System")
-st.write("Use soil moisture and weather forecast to decide whether watering is needed.")
+apply_global_styles()
+premium_header(
+    "💧 Smart Irrigation System",
+    "Use soil moisture and weather forecast to decide whether watering is needed.",
+)
 
 with st.form("smart_irrigation_form"):
     city_name = st.text_input("Location / city name", placeholder="Example: Hyderabad")
@@ -136,15 +141,16 @@ if submit:
         st.error("Please enter a location or city name.")
         st.stop()
 
-    try:
-        location = search_location(clean_city)
-        forecast = fetch_weather(location["latitude"], location["longitude"])
-    except ValueError as exc:
-        st.error(str(exc))
-        st.stop()
-    except WeatherApiError as exc:
-        st.error(str(exc))
-        st.stop()
+    with st.spinner("🤖 AI is analyzing your farm data..."):
+        try:
+            location = search_location(clean_city)
+            forecast = fetch_weather(location["latitude"], location["longitude"])
+        except ValueError as exc:
+            st.error(str(exc))
+            st.stop()
+        except WeatherApiError as exc:
+            st.error(str(exc))
+            st.stop()
 
     total_rainfall = float(forecast["Rainfall (mm)"].sum())
     max_temp = float(forecast["Max Temp (C)"].max())
@@ -160,11 +166,11 @@ if submit:
 
     st.subheader("Auto Water Decision")
     if decision == "Irrigate now":
-        st.error(decision)
+        result_card("Auto water decision", decision, "danger")
     elif "Light" in decision or "Short" in decision:
-        st.warning(decision)
+        result_card("Auto water decision", decision, "warning")
     else:
-        st.success(decision)
+        result_card("Auto water decision", decision, "success")
 
     st.write(reason)
     st.info(action)
@@ -176,3 +182,4 @@ if submit:
 st.warning(
     "This is AI support only. Always confirm soil moisture in the field and follow local irrigation advice."
 )
+footer()
