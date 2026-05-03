@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 *.py[cod]
 .venv/
+.venv310/
 venv/
 env/
 .env
