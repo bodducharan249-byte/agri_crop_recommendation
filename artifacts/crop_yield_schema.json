@@ -1,0 +1,75 @@
+{
+  "target_column": "yield",
+  "target_unit": "dataset unit, commonly tons/hectare",
+  "feature_columns": [
+    "fertilizer",
+    "temp",
+    "n",
+    "p",
+    "k"
+  ],
+  "categorical_columns": [],
+  "numerical_columns": [
+    "fertilizer",
+    "temp",
+    "n",
+    "p",
+    "k"
+  ],
+  "fields": [
+    {
+      "name": "fertilizer",
+      "type": "numerical",
+      "default": 65.01196878934424,
+      "min": 49.7514355255106,
+      "max": 80.22389341335685
+    },
+    {
+      "name": "temp",
+      "type": "numerical",
+      "default": 36.96512122566159,
+      "min": 23.7713100984753,
+      "max": 40.27248002454996
+    },
+    {
+      "name": "n",
+      "type": "numerical",
+      "default": 69.89407564859826,
+      "min": 58.83946573456275,
+      "max": 80.21870450177731
+    },
+    {
+      "name": "p",
+      "type": "numerical",
+      "default": 20.889579401545884,
+      "min": 17.723223305135086,
+      "max": 25.16217841378157
+    },
+    {
+      "name": "k",
+      "type": "numerical",
+      "default": 18.06197470412191,
+      "min": 14.704882559717248,
+      "max": 22.06466576211174
+    }
+  ],
+  "source_csv": "data\\crop_yield\\Crop Yiled with Soil and Weather.csv",
+  "best_model": "RandomForestRegressor",
+  "metrics": {
+    "RandomForestRegressor": {
+      "mae": 0.1214421651078006,
+      "rmse": 0.18336533064536417,
+      "r2": 0.9910536340420651
+    },
+    "GradientBoostingRegressor": {
+      "mae": 0.20082889920887045,
+      "rmse": 0.2802880997545618,
+      "r2": 0.9790963788416494
+    },
+    "LinearRegression": {
+      "mae": 0.5790959180338145,
+      "rmse": 0.7184742597787521,
+      "r2": 0.8626481116038348
+    }
+  }
+}
