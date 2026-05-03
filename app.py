@@ -139,6 +139,11 @@ pages = [
         title="Smart Irrigation",
         icon="💧",
     ),
+    st.Page(
+        "pages/8_Best_Planting_Date.py",
+        title="Best Planting Date",
+        icon="📅",
+    ),
 ]
 
 navigation = st.navigation(pages, position="sidebar")
