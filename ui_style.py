@@ -18,16 +18,19 @@ def apply_global_styles() -> None:
             --agri-red: #ef4444;
             --glass: rgba(255, 255, 255, 0.78);
             --ink: #10231d;
+            --content-width: 1200px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
         }
 
         .stApp {
-            background:
-                radial-gradient(circle at top left, rgba(34, 197, 94, 0.36), transparent 34rem),
-                radial-gradient(circle at top right, rgba(56, 189, 248, 0.34), transparent 32rem),
-                linear-gradient(135deg, #f5fff9 0%, #f2fbff 35%, #faf7ff 68%, #fffaf0 100%);
-            background-size: 140% 140%;
+            background: linear-gradient(135deg, #eefdf5 0%, #f7f3ff 50%, #fff7f0 100%);
             color: var(--ink);
-            animation: activeGradient 14s ease-in-out infinite;
+            overflow-x: hidden;
         }
 
         .stApp:before {
@@ -53,10 +56,61 @@ def apply_global_styles() -> None:
             z-index: 1;
         }
 
+        .stApp > header {
+            height: 3.4rem;
+            background: rgba(236, 253, 245, 0.72);
+            backdrop-filter: blur(14px);
+        }
+
+        [data-testid="stToolbar"],
+        [data-testid="stDecoration"],
+        #MainMenu,
+        footer {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        [data-testid="collapsedControl"] {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: fixed !important;
+            top: 0.72rem !important;
+            left: 6.2rem !important;
+            z-index: 999999 !important;
+            pointer-events: auto !important;
+        }
+
+        [data-testid="collapsedControl"] button {
+            width: 2.55rem !important;
+            height: 2.55rem !important;
+            min-width: 2.55rem !important;
+            min-height: 2.55rem !important;
+            border: 1px solid rgba(40, 116, 240, 0.18) !important;
+            border-radius: 0.85rem !important;
+            background: #ffffff !important;
+            color: #2874f0 !important;
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.20) !important;
+            transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+        }
+
+        [data-testid="collapsedControl"] button:hover {
+            background: #ffdf00 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 16px 34px rgba(30, 64, 175, 0.28) !important;
+        }
+
+        [data-testid="collapsedControl"] svg {
+            fill: #2874f0 !important;
+            stroke: #2874f0 !important;
+        }
+
         .block-container {
-            padding-top: 2.4rem;
-            padding-bottom: 3rem;
-            max-width: 1180px;
+            width: min(var(--content-width), calc(100vw - 48px)) !important;
+            max-width: var(--content-width) !important;
+            padding: 1rem 0 2.5rem 0 !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
         }
 
         section[data-testid="stSidebar"] {
@@ -94,7 +148,18 @@ def apply_global_styles() -> None:
             letter-spacing: 0;
         }
 
-        div[data-testid="stForm"], div[data-testid="stExpander"], div[data-testid="stDataFrame"] {
+        div[data-testid="stForm"] {
+            width: min(var(--content-width), 100%) !important;
+            margin: 0 auto !important;
+            padding: 28px !important;
+            border-radius: 28px !important;
+            background: rgba(255, 255, 255, 0.90) !important;
+            border: 1px solid rgba(255, 255, 255, 0.72) !important;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.10) !important;
+            backdrop-filter: blur(16px);
+        }
+
+        div[data-testid="stExpander"], div[data-testid="stDataFrame"] {
             background: var(--glass);
             border: 1px solid rgba(255, 255, 255, 0.65);
             border-radius: 1.25rem;
@@ -111,11 +176,157 @@ def apply_global_styles() -> None:
             box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
         }
 
+        div[data-baseweb="input"] {
+            border-radius: 14px !important;
+        }
+
+        div[data-testid="stNumberInput"] {
+            position: relative;
+            margin: 0 0 1rem 0;
+            padding: 1rem 1.1rem 1.15rem 4.65rem;
+            border-radius: 1.35rem;
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78)),
+                var(--field-gradient, linear-gradient(135deg, #ecfdf5, #eff6ff));
+            box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+            animation: fieldFloatIn 520ms ease both;
+        }
+
+        div[data-testid="stNumberInput"]:before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 0.42rem;
+            background: var(--field-accent, #10b981);
+        }
+
+        div[data-testid="stNumberInput"]:after {
+            content: var(--field-icon, "✦");
+            position: absolute;
+            left: 1.05rem;
+            top: 50%;
+            width: 2.65rem;
+            height: 2.65rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.95rem;
+            background: var(--field-accent, #10b981);
+            color: #ffffff;
+            font-size: 1.34rem;
+            box-shadow: 0 12px 24px var(--field-shadow, rgba(16, 185, 129, 0.26));
+            transform: translateY(-50%);
+            animation: iconPulse 2.8s ease-in-out infinite;
+        }
+
+        div[data-testid="stNumberInput"]:hover {
+            transform: translateY(-3px);
+            border-color: color-mix(in srgb, var(--field-accent, #10b981) 42%, white);
+            box-shadow: 0 22px 48px var(--field-shadow, rgba(16, 185, 129, 0.24));
+        }
+
+        div[data-testid="stNumberInput"] label,
+        div[data-testid="stNumberInput"] label p {
+            color: #10231d !important;
+            font-size: 1rem !important;
+            font-weight: 900 !important;
+        }
+
+        div[data-testid="stNumberInput"] div[data-baseweb="input"] {
+            background: rgba(255, 255, 255, 0.74) !important;
+            border-radius: 1rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.86) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+            transition: box-shadow 160ms ease, background 160ms ease;
+        }
+
+        div[data-testid="stNumberInput"]:focus-within div[data-baseweb="input"] {
+            background: #ffffff !important;
+            box-shadow: 0 0 0 3px var(--field-ring, rgba(16, 185, 129, 0.18));
+        }
+
+        div[data-testid="stNumberInput"] input {
+            font-weight: 850 !important;
+            color: #10231d !important;
+        }
+
+        div[data-testid="stNumberInput"] button {
+            color: var(--field-accent, #10b981) !important;
+            font-weight: 950 !important;
+        }
+
+        div[data-agri-field="nitrogen"] {
+            --field-icon: "N";
+            --field-accent: #16a34a;
+            --field-gradient: linear-gradient(135deg, #dcfce7, #ecfdf5);
+            --field-shadow: rgba(22, 163, 74, 0.24);
+            --field-ring: rgba(22, 163, 74, 0.18);
+        }
+
+        div[data-agri-field="phosphorus"] {
+            --field-icon: "P";
+            --field-accent: #f59e0b;
+            --field-gradient: linear-gradient(135deg, #fef3c7, #fff7ed);
+            --field-shadow: rgba(245, 158, 11, 0.24);
+            --field-ring: rgba(245, 158, 11, 0.2);
+        }
+
+        div[data-agri-field="potassium"] {
+            --field-icon: "K";
+            --field-accent: #8b5cf6;
+            --field-gradient: linear-gradient(135deg, #ede9fe, #faf5ff);
+            --field-shadow: rgba(139, 92, 246, 0.24);
+            --field-ring: rgba(139, 92, 246, 0.2);
+        }
+
+        div[data-agri-field="temperature"] {
+            --field-icon: "°";
+            --field-accent: #ef4444;
+            --field-gradient: linear-gradient(135deg, #fee2e2, #fff7ed);
+            --field-shadow: rgba(239, 68, 68, 0.22);
+            --field-ring: rgba(239, 68, 68, 0.18);
+        }
+
+        div[data-agri-field="humidity"] {
+            --field-icon: "%";
+            --field-accent: #06b6d4;
+            --field-gradient: linear-gradient(135deg, #cffafe, #eff6ff);
+            --field-shadow: rgba(6, 182, 212, 0.24);
+            --field-ring: rgba(6, 182, 212, 0.18);
+        }
+
+        div[data-agri-field="ph"] {
+            --field-icon: "pH";
+            --field-accent: #db2777;
+            --field-gradient: linear-gradient(135deg, #fce7f3, #fff1f2);
+            --field-shadow: rgba(219, 39, 119, 0.22);
+            --field-ring: rgba(219, 39, 119, 0.18);
+        }
+
+        div[data-agri-field="rainfall"] {
+            --field-icon: "mm";
+            --field-accent: #2563eb;
+            --field-gradient: linear-gradient(135deg, #dbeafe, #eef2ff);
+            --field-shadow: rgba(37, 99, 235, 0.24);
+            --field-ring: rgba(37, 99, 235, 0.18);
+        }
+
+        div[data-agri-field="ph"]:after,
+        div[data-agri-field="rainfall"]:after {
+            font-size: 0.88rem;
+            font-weight: 950;
+        }
+
         .stButton > button, div[data-testid="stFormSubmitButton"] button {
+            width: 100%;
             border: 0;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #10b981, #22d3ee, #8b5cf6);
+            border-radius: 18px;
+            padding: 0.8rem 1rem;
+            background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
             color: white;
+            font-size: 18px;
             font-weight: 800;
             box-shadow: 0 16px 34px rgba(16, 185, 129, 0.28);
             transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
@@ -129,14 +340,14 @@ def apply_global_styles() -> None:
 
         .premium-hero {
             position: relative;
+            width: min(var(--content-width), 100%);
+            max-width: var(--content-width);
+            margin: 0 auto 26px auto;
             overflow: hidden;
-            border-radius: 1.6rem;
-            padding: 1.45rem 1.55rem;
-            margin-bottom: 1.3rem;
-            background:
-                linear-gradient(135deg, rgba(16, 185, 129, 0.94), rgba(14, 165, 233, 0.88), rgba(139, 92, 246, 0.9));
-            box-shadow: 0 28px 80px rgba(14, 116, 144, 0.26);
-            animation: heroBreath 5.5s ease-in-out infinite;
+            border-radius: 28px;
+            padding: 54px 42px;
+            background: linear-gradient(120deg, #10b981 0%, #38bdf8 50%, #8b5cf6 100%);
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.22);
         }
 
         .premium-hero:after {
@@ -152,17 +363,19 @@ def apply_global_styles() -> None:
             z-index: 1;
             margin: 0;
             color: #ffffff;
-            font-size: clamp(2rem, 5vw, 3.6rem);
+            font-size: clamp(36px, 5vw, 64px);
             font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: 0;
         }
 
         .premium-hero p {
             position: relative;
             z-index: 1;
-            margin: 0.55rem 0 0;
+            margin: 24px 0 0;
             color: rgba(255, 255, 255, 0.92);
-            font-size: 1.05rem;
-            font-weight: 600;
+            font-size: clamp(16px, 2vw, 20px);
+            font-weight: 700;
         }
 
         .result-card {
@@ -209,8 +422,7 @@ def apply_global_styles() -> None:
             transition: transform 180ms ease, box-shadow 180ms ease;
         }
 
-        .glass-card:hover,
-        div[data-testid="stForm"]:hover {
+        .glass-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 24px 68px rgba(15, 23, 42, 0.14);
         }
@@ -289,34 +501,49 @@ def apply_global_styles() -> None:
         }
 
         .top-brand-strip {
-            width: min(1180px, calc(100vw - 3rem));
-            margin: -1.55rem auto 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 0.65rem 1rem;
-            border-radius: 0 0 1.35rem 1.35rem;
-            background:
-                linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(236, 253, 245, 0.86));
+            width: min(var(--content-width), 100%);
+            max-width: var(--content-width);
+            margin: 0 auto 24px auto;
+            padding: 18px 28px;
+            border-radius: 0 0 28px 28px;
+            background: rgba(255, 255, 255, 0.82);
             border: 1px solid rgba(255, 255, 255, 0.72);
-            box-shadow: 0 16px 44px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
             backdrop-filter: blur(18px);
-            animation: brandFloat 6s ease-in-out infinite;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(220px, 2fr) minmax(0, 1fr);
+            align-items: center;
+            gap: 20px;
         }
 
         .top-brand-logo {
-            min-height: 3.2rem;
+            min-height: 82px;
             display: flex;
             align-items: center;
-            justify-content: center;
+        }
+
+        .top-brand-logo:first-child {
+            justify-content: flex-start;
+        }
+
+        .top-brand-logo:last-child {
+            justify-content: flex-end;
         }
 
         .top-brand-logo img {
-            max-height: 3.4rem;
-            max-width: 16rem;
+            max-width: 100%;
             object-fit: contain;
             display: block;
+        }
+
+        .top-brand-logo:first-child img {
+            max-height: 78px;
+            width: auto;
+        }
+
+        .top-brand-logo:last-child img {
+            max-height: 86px;
+            width: auto;
         }
 
         .top-brand-fallback {
@@ -330,19 +557,18 @@ def apply_global_styles() -> None:
         }
 
         .top-brand-center {
-            flex: 1;
             text-align: center;
             color: #0f3d34;
             font-weight: 900;
-            font-size: 0.95rem;
+            font-size: 22px;
             line-height: 1.25;
         }
 
         .top-brand-center span {
             display: block;
             color: rgba(15, 61, 52, 0.7);
-            font-size: 0.78rem;
-            margin-top: 0.12rem;
+            font-size: 15px;
+            margin-top: 4px;
             font-weight: 800;
         }
 
@@ -359,6 +585,16 @@ def apply_global_styles() -> None:
         @keyframes pulseDot {
             0%, 100% { transform: scale(0.85); opacity: 0.5; }
             50% { transform: scale(1.18); opacity: 1; }
+        }
+
+        @keyframes fieldFloatIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.06); }
         }
 
         @keyframes shimmer {
@@ -392,26 +628,59 @@ def apply_global_styles() -> None:
             .stApp:before,
             .premium-hero,
             .result-card,
-            .top-brand-strip,
             .ai-loader .dot {
                 animation: none !important;
             }
         }
 
-        @media (max-width: 720px) {
-            .block-container { padding-left: 1rem; padding-right: 1rem; }
-            .premium-hero { padding: 1.2rem; border-radius: 1.25rem; }
-            .premium-hero h1 { font-size: 2rem; }
-            .result-card .value { font-size: 1.15rem; }
-            .top-brand-strip {
-                width: calc(100vw - 1rem);
-                margin-top: -1.2rem;
-                flex-direction: column;
-                border-radius: 0 0 1rem 1rem;
+        @media (max-width: 768px) {
+            .block-container {
+                width: calc(100vw - 24px) !important;
             }
+
+            .premium-hero {
+                padding: 36px 24px;
+                border-radius: 24px;
+            }
+
+            .premium-hero h1 {
+                font-size: clamp(32px, 10vw, 42px);
+            }
+
+            div[data-testid="stForm"] {
+                padding: 20px !important;
+                border-radius: 24px !important;
+            }
+
+            .result-card .value { font-size: 1.15rem; }
+
+            div[data-testid="stNumberInput"] {
+                padding: 4.65rem 0.9rem 1rem 0.9rem;
+            }
+
+            div[data-testid="stNumberInput"]:after {
+                top: 1rem;
+                left: 0.9rem;
+                transform: none;
+            }
+
+            .top-brand-strip {
+                grid-template-columns: 1fr;
+                width: 100%;
+                padding: 18px;
+                border-radius: 24px;
+                text-align: center;
+            }
+
+            .top-brand-logo,
+            .top-brand-logo:first-child,
+            .top-brand-logo:last-child {
+                justify-content: center;
+                min-height: auto;
+            }
+
             .top-brand-logo img {
-                max-height: 2.9rem;
-                max-width: 13rem;
+                max-width: min(260px, 80vw);
             }
         }
         </style>
@@ -481,7 +750,7 @@ def sidebar_branding(assets_dir: Path) -> None:
     ict_logo = assets_dir / "ict_logo.png"
 
     if marwadi_logo.exists():
-        st.sidebar.image(str(marwadi_logo), width=150)
+        st.sidebar.image(str(marwadi_logo), width=185)
     else:
         st.sidebar.markdown(
             '<div class="brand-fallback">Marwadi University</div>',
@@ -489,7 +758,7 @@ def sidebar_branding(assets_dir: Path) -> None:
         )
 
     if ict_logo.exists():
-        st.sidebar.image(str(ict_logo), width=150)
+        st.sidebar.image(str(ict_logo), width=185)
     else:
         st.sidebar.markdown(
             '<div class="brand-fallback">Information &amp; Communication Technology</div>',

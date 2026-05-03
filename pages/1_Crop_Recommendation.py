@@ -4,6 +4,7 @@ import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 
 from ui_style import apply_global_styles, footer, premium_header, result_card
 
@@ -57,6 +58,42 @@ with st.form("crop_form"):
     rainfall = st.number_input("Rainfall (mm)", min_value=0.0, max_value=500.0, value=100.0)
 
     submit = st.form_submit_button("Recommend Crop")
+
+components.html(
+    """
+    <script>
+    const fieldMap = [
+        ["Nitrogen", "nitrogen"],
+        ["Phosphorus", "phosphorus"],
+        ["Potassium", "potassium"],
+        ["Temperature", "temperature"],
+        ["Humidity", "humidity"],
+        ["Soil pH", "ph"],
+        ["Rainfall", "rainfall"]
+    ];
+
+    const decorateCropInputs = () => {
+        const doc = window.parent.document;
+        const inputs = doc.querySelectorAll('div[data-testid="stNumberInput"]');
+
+        inputs.forEach((input) => {
+            const label = input.querySelector("label");
+            const labelText = label ? label.textContent.trim() : "";
+            const match = fieldMap.find(([name]) => labelText.includes(name));
+
+            if (match) {
+                input.dataset.agriField = match[1];
+            }
+        });
+    };
+
+    decorateCropInputs();
+    window.parent.setTimeout(decorateCropInputs, 300);
+    window.parent.setInterval(decorateCropInputs, 1200);
+    </script>
+    """,
+    height=0,
+)
 
 
 if submit:
