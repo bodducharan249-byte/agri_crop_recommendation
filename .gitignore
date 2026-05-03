@@ -9,3 +9,6 @@ env/
 .streamlit/secrets.toml
 data/
 kaggle.json
+artifacts/plant_disease_model.keras
+streamlit.log
+streamlit.err.log

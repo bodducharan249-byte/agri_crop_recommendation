@@ -1,94 +1,25 @@
-from pathlib import Path
-
-import joblib
-import numpy as np
-import pandas as pd
 import streamlit as st
 
 
-BASE_DIR = Path(__file__).resolve().parent
-ARTIFACTS_DIR = BASE_DIR / "artifacts"
-MODEL_PATH = ARTIFACTS_DIR / "crop_recommendation_model.joblib"
-FEATURE_COLUMNS_PATH = ARTIFACTS_DIR / "feature_columns.joblib"
-
-
 st.set_page_config(
-    page_title="Crop Recommendation",
-    page_icon="🌱",
+    page_title="AgriAI Platform",
+    page_icon="🌾",
     layout="centered",
 )
 
+st.sidebar.title("🌾 AgriAI Platform")
+st.sidebar.caption("Smart farming tools for crop and disease support.")
 
-@st.cache_resource
-def load_artifacts():
-    missing_files = [
-        str(path.relative_to(BASE_DIR))
-        for path in (MODEL_PATH, FEATURE_COLUMNS_PATH)
-        if not path.exists()
-    ]
+pages = [
+    st.Page(
+        "pages/1_Crop_Recommendation.py",
+        title="🌱 Crop Recommendation",
+    ),
+    st.Page(
+        "pages/2_Plant_Disease_Detection.py",
+        title="🦠 Plant Disease Detection",
+    ),
+]
 
-    if missing_files:
-        raise FileNotFoundError(
-            "Missing required artifact file(s): " + ", ".join(missing_files)
-        )
-
-    model = joblib.load(MODEL_PATH)
-    feature_columns = joblib.load(FEATURE_COLUMNS_PATH)
-    return model, feature_columns
-
-
-st.title("🌱 Crop Recommendation System")
-st.write("Enter soil and weather details to get the best crop recommendation.")
-
-try:
-    model, feature_columns = load_artifacts()
-except Exception as exc:
-    st.error("The trained model artifacts could not be loaded.")
-    st.info("Run `python train_model.py`, then deploy again with the `artifacts` folder included.")
-    st.exception(exc)
-    st.stop()
-
-
-with st.form("crop_form"):
-    N = st.number_input("Nitrogen (N)", min_value=0.0, max_value=200.0, value=50.0)
-    P = st.number_input("Phosphorus (P)", min_value=0.0, max_value=200.0, value=50.0)
-    K = st.number_input("Potassium (K)", min_value=0.0, max_value=250.0, value=50.0)
-    temperature = st.number_input("Temperature (°C)", min_value=0.0, max_value=60.0, value=25.0)
-    humidity = st.number_input("Humidity (%)", min_value=0.0, max_value=100.0, value=70.0)
-    ph = st.number_input("Soil pH", min_value=0.0, max_value=14.0, value=6.5)
-    rainfall = st.number_input("Rainfall (mm)", min_value=0.0, max_value=500.0, value=100.0)
-
-    submit = st.form_submit_button("Recommend Crop")
-
-
-if submit:
-    input_data = pd.DataFrame(
-        [
-            {
-                "N": N,
-                "P": P,
-                "K": K,
-                "temperature": temperature,
-                "humidity": humidity,
-                "ph": ph,
-                "rainfall": rainfall,
-            }
-        ]
-    )
-    input_data = input_data[feature_columns]
-
-    probabilities = model.predict_proba(input_data)[0]
-    crop_names = model.classes_
-    top_3_indexes = np.argsort(probabilities)[::-1][:3]
-
-    st.subheader("Top 3 Recommended Crops")
-
-    for rank, index in enumerate(top_3_indexes, start=1):
-        crop = crop_names[index]
-        confidence = probabilities[index] * 100
-        st.success(f"{rank}. {crop.title()} - Confidence: {confidence:.2f}%")
-
-    st.info(
-        "This is AI support only. Final decisions should also depend on local soil "
-        "tests, season, water availability, and market demand."
-    )
+navigation = st.navigation(pages, position="sidebar")
+navigation.run()
