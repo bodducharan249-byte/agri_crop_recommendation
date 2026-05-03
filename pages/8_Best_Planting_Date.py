@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import streamlit as st
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
@@ -131,8 +133,11 @@ def find_best_date(forecast: pd.DataFrame, crop: str) -> tuple[pd.Series | None,
     return None, ""
 
 
-st.title("📅 Best Planting Date Predictor")
-st.write("Use crop needs and the next weather forecast to choose a better planting window.")
+apply_global_styles()
+premium_header(
+    "📅 Best Planting Date Predictor",
+    "Use crop needs and the next weather forecast to choose a better planting window.",
+)
 
 with st.form("best_planting_date_form"):
     crop = st.selectbox("Crop", list(CROP_RULES.keys()))
@@ -145,15 +150,16 @@ if submit:
         st.error("Please enter a location or city name.")
         st.stop()
 
-    try:
-        location = search_location(clean_city)
-        forecast = fetch_forecast(location["latitude"], location["longitude"])
-    except ValueError as exc:
-        st.error(str(exc))
-        st.stop()
-    except WeatherApiError as exc:
-        st.error(str(exc))
-        st.stop()
+    with st.spinner("🤖 AI is analyzing your farm data..."):
+        try:
+            location = search_location(clean_city)
+            forecast = fetch_forecast(location["latitude"], location["longitude"])
+        except ValueError as exc:
+            st.error(str(exc))
+            st.stop()
+        except WeatherApiError as exc:
+            st.error(str(exc))
+            st.stop()
 
     best_row, reason = find_best_date(forecast, crop)
     place_parts = [location.get("name"), location.get("admin1"), location.get("country")]
@@ -164,7 +170,7 @@ if submit:
         st.warning("No ideal planting date found in the next forecast window. Wait and monitor weather.")
     else:
         st.subheader("Best Planting Date")
-        st.success(str(best_row["Date"]))
+        result_card("Best planting date", str(best_row["Date"]), "success")
         st.write(reason)
 
         col1, col2, col3 = st.columns(3)
@@ -184,3 +190,4 @@ if submit:
 st.warning(
     "Final planting decision should also consider soil preparation, seed availability, irrigation, and local agriculture advice."
 )
+footer()

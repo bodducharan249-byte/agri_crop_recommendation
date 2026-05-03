@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 ARTIFACTS_DIR = BASE_DIR / "artifacts"
@@ -30,8 +32,11 @@ def load_artifacts():
     return model, feature_columns
 
 
-st.title("🌱 Crop Recommendation System")
-st.write("Enter soil and weather details to get the best crop recommendation.")
+apply_global_styles()
+premium_header(
+    "🌱 Crop Recommendation System",
+    "Enter soil and weather details to get the best crop recommendation.",
+)
 
 try:
     model, feature_columns = load_artifacts()
@@ -55,33 +60,40 @@ with st.form("crop_form"):
 
 
 if submit:
-    input_data = pd.DataFrame(
-        [
-            {
-                "N": N,
-                "P": P,
-                "K": K,
-                "temperature": temperature,
-                "humidity": humidity,
-                "ph": ph,
-                "rainfall": rainfall,
-            }
-        ]
-    )
-    input_data = input_data[feature_columns]
+    with st.spinner("🤖 AI is analyzing your farm data..."):
+        input_data = pd.DataFrame(
+            [
+                {
+                    "N": N,
+                    "P": P,
+                    "K": K,
+                    "temperature": temperature,
+                    "humidity": humidity,
+                    "ph": ph,
+                    "rainfall": rainfall,
+                }
+            ]
+        )
+        input_data = input_data[feature_columns]
 
-    probabilities = model.predict_proba(input_data)[0]
-    crop_names = model.classes_
-    top_3_indexes = np.argsort(probabilities)[::-1][:3]
+        probabilities = model.predict_proba(input_data)[0]
+        crop_names = model.classes_
+        top_3_indexes = np.argsort(probabilities)[::-1][:3]
 
     st.subheader("Top 3 Recommended Crops")
 
     for rank, index in enumerate(top_3_indexes, start=1):
         crop = crop_names[index]
         confidence = probabilities[index] * 100
-        st.success(f"{rank}. {crop.title()} - Confidence: {confidence:.2f}%")
+        result_card(
+            f"Recommendation {rank}",
+            f"{crop.title()} - Confidence: {confidence:.2f}%",
+            "success",
+        )
 
     st.info(
         "This is AI support only. Final decisions should also depend on local soil "
         "tests, season, water availability, and market demand."
     )
+
+footer()

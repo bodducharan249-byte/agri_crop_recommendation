@@ -1,4 +1,12 @@
+from pathlib import Path
+
 import streamlit as st
+
+from ui_style import apply_global_styles, sidebar_branding, top_brand_bar
+
+
+BASE_DIR = Path(__file__).resolve().parent
+ASSETS_DIR = BASE_DIR / "assets"
 
 
 st.set_page_config(
@@ -7,6 +15,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+apply_global_styles()
 
 st.markdown(
     """
@@ -100,7 +110,21 @@ st.markdown(
 )
 
 st.sidebar.title("🌾 AgriAI Platform")
-st.sidebar.caption("Smart farming AI tools for crop, disease, and yield support.")
+st.sidebar.caption("Smart farming AI decision support")
+st.sidebar.markdown(
+    """
+    **Systems**
+
+    🌱 Crop Recommendation  
+    🦠 Disease Detection  
+    🌾 Yield Prediction  
+    🌧️ Rainfall Forecast  
+    🌰 Seed Quality  
+    🧪 Pesticide Advice  
+    💧 Smart Irrigation  
+    📅 Planting Date
+    """
+)
 st.sidebar.divider()
 
 pages = [
@@ -147,4 +171,7 @@ pages = [
 ]
 
 navigation = st.navigation(pages, position="sidebar")
+st.sidebar.divider()
+sidebar_branding(ASSETS_DIR)
+top_brand_bar(ASSETS_DIR)
 navigation.run()

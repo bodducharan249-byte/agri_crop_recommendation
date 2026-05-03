@@ -5,6 +5,8 @@ import joblib
 import pandas as pd
 import streamlit as st
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 MODEL_PATH = BASE_DIR / "artifacts" / "crop_yield_model.joblib"
@@ -25,7 +27,11 @@ def make_label(name: str) -> str:
     return name.replace("_", " ").title()
 
 
-st.title("Crop Yield Prediction")
+apply_global_styles()
+premium_header(
+    "🌾 Crop Yield Prediction",
+    "Enter crop, soil, and weather details to estimate expected crop yield.",
+)
 
 if not MODEL_PATH.exists() or not SCHEMA_PATH.exists():
     st.warning("Train the Crop Yield model first.")
@@ -33,8 +39,6 @@ if not MODEL_PATH.exists() or not SCHEMA_PATH.exists():
 
 model = load_model()
 schema = load_schema()
-
-st.write("Enter crop, soil, and weather details to estimate expected crop yield.")
 
 with st.form("yield_prediction_form"):
     input_values = {}
@@ -64,13 +68,16 @@ with st.form("yield_prediction_form"):
     submit = st.form_submit_button("Predict Yield")
 
 if submit:
-    input_df = pd.DataFrame([input_values], columns=schema["feature_columns"])
-    expected_yield = float(model.predict(input_df)[0])
-    unit = schema.get("target_unit", "dataset unit, commonly tons/hectare")
+    with st.spinner("🤖 AI is analyzing your farm data..."):
+        input_df = pd.DataFrame([input_values], columns=schema["feature_columns"])
+        expected_yield = float(model.predict(input_df)[0])
+        unit = schema.get("target_unit", "dataset unit, commonly tons/hectare")
 
     st.subheader("Estimated Yield")
-    st.success(f"Expected yield: {expected_yield:.2f} {unit}")
+    result_card("Expected yield", f"{expected_yield:.2f} {unit}", "success")
     st.warning(
         "This is an estimated yield. Actual yield depends on seed quality, "
         "pest control, fertilizer, irrigation, and local conditions."
     )
+
+footer()

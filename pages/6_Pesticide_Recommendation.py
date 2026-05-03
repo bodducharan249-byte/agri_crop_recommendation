@@ -1,5 +1,7 @@
 import streamlit as st
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 CROPS = ["rice", "cotton", "tomato", "chilli", "wheat", "maize"]
 PESTS = [
@@ -54,8 +56,11 @@ CROP_NOTES = {
 }
 
 
-st.title("🧪 Pesticide Recommendation System")
-st.write("Select the crop and pest/problem to get a safer, farmer-friendly control suggestion.")
+apply_global_styles()
+premium_header(
+    "🧪 Pesticide Recommendation System",
+    "Select the crop and pest/problem to get a safer, farmer-friendly control suggestion.",
+)
 
 with st.form("pesticide_recommendation_form"):
     crop = st.selectbox("Crop", CROPS)
@@ -63,10 +68,11 @@ with st.form("pesticide_recommendation_form"):
     submit = st.form_submit_button("Get Recommendation")
 
 if submit:
-    recommendation = RECOMMENDATIONS[pest]
+    with st.spinner("🤖 AI is analyzing your farm data..."):
+        recommendation = RECOMMENDATIONS[pest]
 
     st.subheader("Recommended Safer Option")
-    st.success(recommendation["option"])
+    result_card("Recommended safer option", recommendation["option"], "success")
 
     st.subheader("Application Caution")
     st.warning(recommendation["caution"])
@@ -83,3 +89,4 @@ st.error(
 st.caption(
     "This rule-based system avoids banned or highly dangerous pesticides and favors safer, integrated pest management options."
 )
+footer()

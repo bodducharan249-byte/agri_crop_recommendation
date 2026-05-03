@@ -6,6 +6,8 @@ from PIL import Image
 import streamlit as st
 import tensorflow as tf
 
+from ui_style import apply_global_styles, footer, premium_header, result_card
+
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 MODEL_PATH = BASE_DIR / "artifacts" / "seed_quality_model.keras"
@@ -30,9 +32,10 @@ def prepare_image(uploaded_image) -> np.ndarray:
     return np.expand_dims(image_array, axis=0)
 
 
-st.title("🌰 Seed Quality Checker")
-st.write(
-    "This system will classify seed quality as good, damaged, broken, or infected."
+apply_global_styles()
+premium_header(
+    "🌰 Seed Quality Checker",
+    "This system will classify seed quality as good, damaged, broken, or infected.",
 )
 
 uploaded_image = st.file_uploader(
@@ -49,15 +52,20 @@ if not MODEL_PATH.exists() or not CLASS_NAMES_PATH.exists():
 elif uploaded_image is None:
     st.info("Upload a seed image to check quality.")
 else:
-    model = load_model()
-    class_names = load_class_names()
-    prediction = model.predict(prepare_image(uploaded_image), verbose=0)[0]
-    class_index = int(np.argmax(prediction))
-    confidence = float(prediction[class_index]) * 100
+    with st.spinner("🤖 AI is analyzing your farm data..."):
+        model = load_model()
+        class_names = load_class_names()
+        prediction = model.predict(prepare_image(uploaded_image), verbose=0)[0]
+        class_index = int(np.argmax(prediction))
+        confidence = float(prediction[class_index]) * 100
 
-    st.success(f"Class name: {class_names[class_index]}")
-    st.metric("Confidence", f"{confidence:.2f}%")
+    col1, col2 = st.columns(2)
+    with col1:
+        result_card("Class name", class_names[class_index], "success")
+    with col2:
+        result_card("Confidence", f"{confidence:.2f}%", "info")
 
 st.warning(
     "This is AI support only. Final seed selection should be verified manually."
 )
+footer()
